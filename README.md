@@ -42,7 +42,7 @@ cd ../tl_out
 #from index.html and failure_restarts.html, error stack trace can be seen
 ```
 
-![alt text](image.png)
+![alt text](Images/error_log.png)
 
 ### Error Stack Trace from inductor.txt
 ```text

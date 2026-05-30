@@ -111,6 +111,101 @@ V0528 18:39:59.137644 1669006 .venv/lib/python3.11/storch/_inductor/sizevars.py:
 [torch/_inductor/codegen/triton.py:1730] [0/0_1] Cannot use TMA descriptor for load / store since:  Requires triton>=3.4.0, a CUDA device with cc>=9.0 and `use_tensor_descriptor` and `assume_aligned_inputs` options enabled
 [torch/_inductor/codegen/triton.py:1730] [0/0_1] Cannot use TMA descriptor for load / store since:  Requires triton>=3.4.0, a CUDA device with cc>=9.0 and `use_tensor_descriptor` and `assume_aligned_inputs` options enabled
 [torch/_inductor/codegen/simd.py:1473] [0/0_1] Generating kernel code with kernel_name: triton_poi_fused_arange_cat_expand_index_sub_unsqueeze_view_31
-
 ```
+## Generated code for the op319
+```
+op318: ExternKernelSchedulerNode(MultiOutput)
+op318.writes = [StarDep(name='buf318', mode=None)]
+op318.unmet_dependencies = [StarDep(name='buf316', mode=None)]
+op318.met_dependencies = []
+op318.outputs = [
+    buf318: MultiOutput
+    buf318.layout = FixedLayout('cuda:0', torch.int64, size=[1, s1, 10], stride=[10*s1, 10, 1])
+    buf318.users = [NodeUser(node=SchedulerNode(name='op319'), can_inplace=False, is_weak=False)]
+]
+op318.node.kernel = None
 
+
+op319: SchedulerNode(ComputedBuffer)
+op319.writes = [MemoryDep('buf319', 3968*c0 + c1, {c0: s1, c1: 3960})]
+op319.unmet_dependencies = 
+    [   MemoryDep('buf311', 198*c0 + (I), {c0: s1, c1: 10, c2: 396}),
+        MemoryDep('buf311', 198*c0 + (I), {c0: s1, c1: 10, c2: 396}),
+        MemoryDep('buf311', 198*tmp0 + (I), {c0: 10*s1, c1: 396}),
+        MemoryDep('buf318', c0, {c0: 10*s1})]
+op319.met_dependencies = []
+op319.outputs = [
+    buf319: ComputedBuffer
+    buf319.layout = FixedLayout('cuda:0', torch.float32, size=[1, s1, 10, 396], stride=[3968*s1, 3968, 396, 1])
+    buf319.users = [NodeUser(node=SchedulerNode(name='op320'), can_inplace=False, is_weak=False)]
+]
+op319.group.device = cuda:0
+op319.group.iteration = (3960*s1, 1)
+op319.sizes = ([s1, 10, 396], [])
+buf311_layout = FixedLayout('cuda:0', torch.float32, size=[1, s1, 198], stride=[198*s1, 198, 1])
+buf318_layout = FixedLayout('cuda:0', torch.int64, size=[1, s1, 10], stride=[10*s1, 10, 1])
+buf311_layout = FixedLayout('cuda:0', torch.float32, size=[1, s1, 198], stride=[198*s1, 198, 1])
+buf311_layout = FixedLayout('cuda:0', torch.float32, size=[1, s1, 198], stride=[198*s1, 198, 1])
+buf319_layout = FixedLayout('cuda:0', torch.float32, size=[1, s1, 10, 396], stride=[3968*s1, 3968, 396, 1])
+class op319_loop_body:
+    var_ranges = {p0: s1, p1: 10, p2: 396}
+    index0 = p2
+    index1 = 198*p0 + (I)
+    index2 = 0
+    index3 = 1
+    index4 = 10*p0 + p1
+    index5 = 198*indirect0 + (I)
+    index6 = 198*p0 + (I)
+    index7 = 3968*p0 + 396*p1 + p2
+    def body(self, ops):
+        get_index = self.get_index('index0')
+        index_expr = ops.index_expr(get_index, torch.int64)
+        constant = ops.constant(0, torch.int64)
+        ge = ops.ge(index_expr, constant)
+        get_index_1 = self.get_index('index0')
+        index_expr_1 = ops.index_expr(get_index_1, torch.int64)
+        constant_1 = ops.constant(198, torch.int64)
+        lt = ops.lt(index_expr_1, constant_1)
+        masked_subblock1 = self.masked_subblock1(lt, 0.0)
+        get_index_2 = self.get_index('index0')
+        index_expr_2 = ops.index_expr(get_index_2, torch.int64)
+        constant_2 = ops.constant(198, torch.int64)
+        ge_1 = ops.ge(index_expr_2, constant_2)
+        get_index_3 = self.get_index('index0')
+        index_expr_3 = ops.index_expr(get_index_3, torch.int64)
+        constant_3 = ops.constant(396, torch.int64)
+        lt_1 = ops.lt(index_expr_3, constant_3)
+        masked_subblock2 = self.masked_subblock2(ge_1, 0.0)
+        where = ops.where(lt, masked_subblock1, masked_subblock2)
+        get_index_4 = self.get_index('index7')
+        store = ops.store('buf319', get_index_4, where, None)
+        return store
+    def masked_subblock1(self, ops):
+        get_index = self.get_index('index1')
+        load = ops.load('buf311', get_index)
+        return load
+    def masked_subblock2(self, ops):
+        get_index = self.get_index('index2')
+        get_index_1 = self.get_index('index3')
+        check_bounds = ops.check_bounds(get_index, get_index_1, False, False)
+        get_index_2 = self.get_index('index4')
+        load = ops.load('buf318', get_index_2)
+        set_indirect0 = self.set_indirect0(load)
+        get_index_3 = self.get_index('index5')
+        load_1 = ops.load('buf311', get_index_3)
+        get_index_4 = self.get_index('index6')
+        load_2 = ops.load('buf311', get_index_4)
+        sub = ops.sub(load_1, load_2)
+        return sub
+
+
+op320: SchedulerNode(ComputedBuffer)
+op320.writes = [MemoryDep('buf320', c0, {c0: 3960*s1})]
+op320.unmet_dependencies = [   MemoryDep('buf319', c1 + 3968*((c0//10)) + 396*(ModularIndexing(c0, 1, 10)), {c0: 10*s1, c1: 396})]
+op320.met_dependencies = []
+op320.outputs = [
+    buf320: ComputedBuffer
+    buf320.layout = FixedLayout('cuda:0', torch.float32, size=[10*s1, 396], stride=[396, 1])
+    buf320.users = [NodeUser(node=ExternKernelSchedulerNode(name='op321'), can_inplace=False, is_weak=False)]
+]
+```
